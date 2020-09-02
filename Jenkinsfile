@@ -17,16 +17,22 @@ pipeline {
                 sh 'mnv package'
             }
         }
-        stage('deploy') {
+        stage('test') {
             steps {
-                echo 'Hello deploy'
+                sh 'mvn test'
                 
             }
         }
-        stage('test') {
-            steps {
-                echo 'Hello test'
+        stage (' build and publish image')
+      steps {
+          script {
+          checkout scm
+          docker.withRegistry('', 'dockerUserID') {
+              def customImage = docker.build("magloire1/hol-pipeline:${env.BUILD_ID}"}
+                                             customImage.push()
+                                             
+                }                                
             }
-        }
-    }
-}
+        
+            }
+       }
